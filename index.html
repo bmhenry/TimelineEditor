@@ -1,0 +1,253 @@
+<!doctype html>
+
+
+<!--
+	Brandon Henry, 2015
+
+	Uses the TimelineJS library
+	This page is strongly based off of the TimelineJS example
+-->
+
+<html>
+
+<head>
+    <title>Timeline Creator</title>
+    <!-- include Timeline CSS & fonts-->
+    <link type="text/css" rel="stylesheet" href="css/timeline.css"/>
+    <link rel="stylesheet" href="css/fonts/font.default.css?v1"/>
+
+    <link type="text/css" rel="stylesheet" href="style.css"/>
+
+    <!-- HTML5 shim, for IE6-8 support of HTML elements-->
+    <!--if lt IE 9
+    script(src='https://html5shim.googlecode.com/svn/trunk/html5.js')
+
+    -->
+</head>
+
+<body>
+<div id="controls">
+    <div id="filebutton" onclick="openFileControls()" class="fauxbutton"><span>File</span></div>
+    <div id="editbutton" onclick="openEditControls()" class="fauxbutton"><span>Edit</span></div>
+    <div id="helpbutton" onclick="openHelp()" class="fauxbutton"><span>?</span></div>
+</div>
+
+<div id="mainoverlay" class="overlay">
+    <!-- file controls overlay -->
+    <div id="filediv" onmouseover="overmenu()" onmouseout="leftmenu()" class="overlaymenu">
+        <div id="filemenucontainer">
+            <br>
+            <button style="width:70%" onclick="newTimeline()">New Timeline</button>
+            <p style="width: 70%; margin: 0 auto; font-size:12px">
+                Causes the page to refresh, restoring the timeline back to its original state.
+            </p>
+            <br/>
+            <button style="width:70%" onclick="saveTimeline()">Save Timeline...</button>
+            <p style="width: 70%; margin: 0 auto; font-size:12px">
+                Lets you download the timeline data (you'll still need to load it into the site again to see it).
+            </p>
+            <br/>
+            <div id="savesection">
+                <a id="savelink" onclick="hideSaveLink()" download>Download Timeline Data</a>
+                <p style="width:80%; margin:0 auto;">(If you're using Internet Explorer, you'll have to right click this link and choose 'Save As...' in order to save it)</p>
+                <br/>
+            </div>
+            <button style="width:70%" onclick="showLoadSection()">Load from File...</button>
+            <p style="width: 70%; margin: 0 auto; font-size:12px">
+                Lets you load timeline data from a file you saved previously.
+            </p>
+            <br/>
+            <div id="loadsection">
+                <p>Select file:</p>
+                <input id="fileselect" type="file">
+                <button onclick="loadTimeline()">Load Selected File</button>
+                <br>
+            </div>
+            <br>
+        </div>
+    </div>
+
+    <!-- edit controls overlay -->
+    <div id="editdiv" onmouseover="overmenu()" onmouseout="leftmenu()" class="overlaymenu">
+        <div id="editmenucontainer">
+            <!-- edit options buttons -->
+            <div id="edittimelinebutton" onclick="openTimelineControls()" class="fauxbutton">Edit Timeline Info</div>
+            <div id="editeventsbutton" onclick="openEventsControls()" class="fauxbutton">Edit Events</div>
+
+            <!-- menu to edit timeline title slide -->
+            <div id="edittimelinemenu">
+                <hr style="margin: 2% 0; border: 1px solid black;"/>
+                <p>This information shows up on the first "slide" of your timeline.</p>
+                <table style="margin: 0 auto;">
+                    <tr>
+                        <td>Title:</td>
+                        <td><input id="ttitle" type="text" style="width:70%;"></td>
+                    </tr>
+                    <tr>
+                        <td style="vertical-align:top;">Description:</td>
+                        <td><textarea id="tdesc" rows="4" style="width:70%;"></textarea></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="width:90%;">Optionally, you can enter a media link (see the help menu for more information):
+                    </tr>
+                    <tr>
+                        <td>Media URL:</td>
+                        <td><input id="tmedia" type="text" style="width:70%;"></td>
+                    </tr>
+                    <tr>
+                        <td>Caption:</td>
+                        <td><input id="tcaption" type="text" style="width:70%;"></td>
+                    </tr>
+                    <tr>
+                        <td>Source:</td>
+                        <td><input id="tsource" type="text" style="width:70%;"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align: center;">
+                            <button onclick="saveTimelineInfo()">Save</button>
+                            <button onclick="clearTimelineInfo()">Clear</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <br/>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- menu to edit events -->
+            <div id ="editeventsmenu">
+                <hr style="margin: 2% 0; border: 1px solid black;"/>
+                <h4>Edit an existing slide or make a new one.</h4>
+                <table style="margin: 0 auto;">
+                    <!-- selection menu for existing events -->
+                    <tr>
+                        <td>Select Event:</td>
+                        <td>
+                            <select id="eventselect" style="width: 70%" onchange="eventListChanged()">
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Title:</td>
+                        <td><input id="etitle" type="text" style="width:70%;"></td>
+                    </tr>
+                    <tr>
+                        <td style="vertical-align:top;">Description:</td>
+                        <td><textarea id="edesc" rows="4" style="width:70%;"></textarea></td>
+                    </tr>
+                    <tr><td colspan="2"><br/></td></tr>
+                    <tr>
+                        <td colspan="2" style="width:90%;">You can choose to enter a group name (see the help menu for more information):</td>
+                    </tr>
+                    <tr>
+                        <td>Group:</td>
+                        <td><input id="egroup" type="text" style="width:70%;"></td>
+                    </tr>
+                    <tr>
+                        <td>Media URL:</td>
+                        <td><input id="emedia" type="text" style="width:70%;"></td>
+                    </tr>
+                    <tr>
+                        <td>Caption:</td>
+                        <td><input id="ecaption" type="text" style="width:70%;"></td>
+                    </tr>
+                    <tr>
+                        <td>Source:</td>
+                        <td><input id="esource" type="text" style="width:70%;"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Date (or Start Date):</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <span style="display:inline;">Year:</span>
+                            <input id="start_year" type="number" min="0" max="100000" style="display:inline;">
+                            <select id="start_period" style="display:inline;">
+                                <option value="year_ce">CE</option>
+                                <option value="year_bce">BCE</option>
+                            </select>
+                            <span style="display:inline;">Month:</span>
+                            <input id="start_month" type="number" min="0" max="12" style="display:inline;">
+                            <span style="display:inline;">Day:</span>
+                            <input id="start_day" type="number" min="0" max="31" style="display:inline;">
+                        </td>
+                    </tr>
+                    <tr><td colspan="2"><br/></td></tr>
+                    <tr>
+                        <td colspan="2" style="width:90%;">Ticking the box below will turn the Event into a Spanning Event (from the Start Date to the End Date)</td>
+                    </tr>
+                    <tr>
+                        <td>Use End Date?</td>
+                        <td><input id="use_end_date" onchange="checkEndDate()" type="checkbox"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><span id="enddate_label" style="display:none;">End Date:</span></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+									<span id="enddate_row" style="display:none;">
+										<span style="display:inline;">Year:</span>
+										<input id="end_year" type="number" min="0" max="100000" style="display:inline;">
+										<select id="end_period" style="display:inline;">
+                                            <option value="year_ce">CE</option>
+                                            <option value="year_bce">BCE</option>
+                                        </select>
+										<span style="display:inline;">Month:</span>
+										<input id="end_month" type="number" min="1" max="12" style="display:inline;">
+										<span style="display:inline;">Day:</span>
+										<input id="end_day" type="number" min="1" max="31" style="display:inline;">
+									</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align: center;">
+                            <button onclick="saveEventInfo()">Save</button>
+                            <button onclick="deleteEvent()">Delete</button>
+                            <button onclick="clearEventInfo()">Clear</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <br/>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- help overlay -->
+    <div id="help" style="color:white; font-size:14px;" onmouseover="overmenu()" onmouseout="leftmenu()" class="overlaymenu">
+        <h3>Timeline Editor</h3>
+        <span style="text-align: left">
+        <p><b><i>Important!</i></b> Refreshing this page will erase your timeline! Save before refreshing!</p>
+        <p>This website will allow you to create a timeline by inserting events from the Edit menu. These events should have at least a title and a starting date.</p>
+        <p>Each event can also have a media link, which can be a URL to a ton of different things:</p>
+        <ul>
+            <li>A URL right to an image</li>
+            <li>A Wikipedia article</li>
+            <li>An Instagram or Flickr photo</li>
+            <li>A Vine or Youtube video</li>
+            <li>A Google Maps link</li>
+            <li>Even a Soundcloud track</li>
+        </ul>
+        <p>Just stick a link in the 'Media URL' box when you add an event. A caption is optional, but if you're doing something scholarly don't forget to cite your sources!</p>
+        <p>Groups can be specified for events to help categorize them on the timeline. The events will be put on different rows corresponding to the group they're in. If no group is specified, the events will be put into the bottom section of the timeline.</p>
+        </span>
+    </div>
+</div>
+
+<!-- where the timeline is -->
+<div id="timeline"></div>
+
+<!-- scripts -->
+<script src="js/timeline.js"></script>
+<script src="objects.js"></script>
+<script src="mainscript.js"></script>
+
+
+</body>
+
+</html>
